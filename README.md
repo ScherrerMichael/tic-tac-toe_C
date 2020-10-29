@@ -1,2 +1,2 @@
-# tic-tac-tow_C
-Tic-Tac-Toe game
+# tic-tac-toe_C
+small tic tac toe game :)
