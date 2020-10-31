@@ -4,18 +4,26 @@
 
 using namespace std;
 
-void print_board(const char array[][3]);
-void make_turn(bool player, char symbol, char array[][3]);
+const int rows = 3;
+const int columns = 3;
+
+void print_board(const char array[][columns]);
+void make_turn(bool player, char symbol, char array[][columns]);
 
 int main()
 {
     string input;
+    bool multiplayer;
+    char player_one_symbol;
+    char player_two_symbol;
 
-    char array[3][3] ={
+    char array[rows][columns] ={
         {' ',' ',' '},
         {' ',' ',' '},
         {' ',' ',' '},
     };
+
+    cout<<"welcome, \n one or two players?";
 
     cout<<"Enter name: ";
     getline(cin, input);
@@ -32,11 +40,11 @@ int main()
 
     // display the game board
 
-    make_turn(1,'X', array);
+    make_turn(true,'X', array);
     print_board(array);
 }
 
-void print_board(const char array[][3])
+void print_board(const char array[][columns])
 {
     cout<< array[0][0]; cout<< "  |  "; cout<< array[0][1]; cout<<"  |  "; cout<< array[0][2] <<endl;
     cout<< '_'; cout<< "     "; cout<< '_'; cout<<"     "; cout<< '_' <<endl;
@@ -47,7 +55,7 @@ void print_board(const char array[][3])
     cout<< array[2][0]; cout<< "  |  "; cout<< array[2][1]; cout<<"  |  "; cout<< array[2][2] <<endl;
 }
 
-void make_turn(bool player, char symbol, char array[][3])
+void make_turn(bool player, char symbol, char array[][columns])
 {
     int row;
     int col;
