@@ -20,7 +20,7 @@ struct player_data
     char player_two_icon;
 };
 
-
+void print_spaces(int num_spaces = 100);
 void print_welcome();
 void prompt_create_game(player_data * & data);
 void print_board(const char array[][columns]);
@@ -45,6 +45,7 @@ int main()
 
     // display the game board
     print_board(array);
+    cout<<endl;
     do{
         current_turn = !current_turn;
     }while(make_turn(current_turn, data, array));
@@ -120,6 +121,7 @@ void prompt_create_game(player_data * & data){
 
 void print_board(const char array[][columns])
 {
+    print_spaces();
     cout<< array[0][0]; cout<< "  |  "; cout<< array[0][1]; cout<<"  |  "; cout<< array[0][2] <<endl;
     cout<< '_'; cout<< "     "; cout<< '_'; cout<<"     "; cout<< '_' <<endl;
     cout <<endl;
@@ -134,7 +136,11 @@ bool make_turn(bool player, player_data *&data, char array[][columns])
     int row;
     int col;
 
-    cout<<"player" << player << "'s turn:" <<endl;
+    if(player)
+    cout<<"Player: " << data -> player_one_name<< "'s turn:" <<endl;
+    else
+    cout<<"Player: " << data -> player_two_name<< "'s turn:" <<endl;
+
     do{
         cout<<"enter row number: "; cin >> row;
         cout<<"enter colum number: "; cin >> col;
@@ -159,6 +165,8 @@ bool check_win(const char array[][columns], player_data *& data, int row, int co
 {
 
     print_board(array);
+
+    cout<<endl;
 
     //verify: 
 
@@ -230,7 +238,7 @@ bool check_win(const char array[][columns], player_data *& data, int row, int co
         //cats game (no winner)
         if(is_full(array))
         {
-            cout<<"cats game (no winner)";
+            cout<<"Cats game (no winner)";
             return false;
         }
 
@@ -260,5 +268,12 @@ void make_winner(bool player, player_data *& data)
     else{
         data -> player_two_score += 1;
         cout<<"Player: " <<data->player_two_name <<" wins!"<<endl;
+    }
+}
+
+void print_spaces(int num_spaces){
+
+    for(int i = 0; i < num_spaces; ++i){
+        cout<<endl;
     }
 }
