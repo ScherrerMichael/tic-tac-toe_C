@@ -204,7 +204,7 @@ bool check_win(const char array[][columns], player_data *& data, int row, int co
         }
         // first column
         if(col == 0){
-            if(array[0][0] == symbol && array[0][1] == symbol && array[0][2] == symbol){
+            if(array[0][0] == symbol && array[1][0] == symbol && array[2][0] == symbol){
 
                 make_winner(player, data);
                 return false;
@@ -212,7 +212,7 @@ bool check_win(const char array[][columns], player_data *& data, int row, int co
         }
         // second column
         if(col == 1){
-            if(array[1][1] == symbol && array[1][1] == symbol && array[1][2] == symbol){
+            if(array[0][1] == symbol && array[1][1] == symbol && array[2][1] == symbol){
 
                 make_winner(player, data);
                 return false;
@@ -220,7 +220,7 @@ bool check_win(const char array[][columns], player_data *& data, int row, int co
         }
         // third column
         if(col == 2){
-            if(array[2][2] == symbol && array[2][1] == symbol && array[2][2] == symbol){
+            if(array[0][2] == symbol && array[1][2] == symbol && array[3][2] == symbol){
 
                 make_winner(player, data);
                 return false;
