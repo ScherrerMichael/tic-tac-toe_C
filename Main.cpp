@@ -24,10 +24,12 @@ void print_spaces(int num_spaces = 100);
 void print_welcome();
 void prompt_create_game(player_data * & data);
 void print_board(const char array[][columns]);
+void clear_board(char array[][columns]);
 bool make_turn(bool player, player_data *&data, char array[][columns]);
 bool check_win(const char array[][columns], player_data *& data, int row, int col, char symbol, bool player);
 bool is_full(const char array[][columns]);
 void make_winner(bool player, player_data *& data);
+bool play_again(player_data *& data);
 
 int main()
 {
@@ -43,12 +45,17 @@ int main()
     print_welcome();
     prompt_create_game(data);
 
-    // display the game board
-    print_board(array);
-    cout<<endl;
+    //main loop
     do{
-        current_turn = !current_turn;
-    }while(make_turn(current_turn, data, array));
+        clear_board(array);
+        //game loop
+        print_board(array);
+        cout<<endl;
+        do{
+            current_turn = !current_turn;
+        }while(make_turn(current_turn, data, array));
+
+    }while(play_again(data));
 }
 
 void print_welcome(){
@@ -130,7 +137,7 @@ void print_board(const char array[][columns])
     cout<<"2  "<< '_'; cout<< "     "; cout<< '_'; cout<<"     "; cout<< '_' <<endl;
     cout <<endl;
     cout<<"   "<< array[2][0]; cout<< "  |  "; cout<< array[2][1]; cout<<"  |  "; cout<< array[2][2] <<endl;
-    cout<<"2  "<<endl;
+    cout<<"3  "<<endl;
 }
 
 bool make_turn(bool player, player_data *&data, char array[][columns])
@@ -144,8 +151,7 @@ bool make_turn(bool player, player_data *&data, char array[][columns])
     cout<<"Player: " << data -> player_two_name<< "'s turn:" <<endl;
 
     do{
-        cout<<"enter row number: "; cin >> row;
-        cout<<"enter colum number: "; cin >> col;
+        cout<<"enter row, column: "; cin >> row; cin >> col;
         if((row < 1 || row > 3) || (col < 1 || col > 3))
         {
             cout << "please enter a valid row/column" <<endl <<endl;
@@ -173,21 +179,14 @@ bool check_win(const char array[][columns], player_data *& data, int row, int co
     //verify: 
 
         // diagonals
-        if(row == 0 && col == 0){
-            if(array[1][1] == symbol && array[2][2] == symbol){
+        if( row == col){
+            if((array[0][0] == symbol) && (array[1][1] == symbol) && (array[2][2] == symbol)){
 
                 make_winner(player, data);
                 return false;
             }
         }
 
-        if(row == 0 && col == 2){
-            if(array[1][1] == symbol && array[2][0] == symbol){
-
-                make_winner(player, data);
-                return false;
-            }
-        }
         // first row
         if(row == 0){
             if(array[0][0] == symbol && array[0][1] == symbol && array[0][2] == symbol){
@@ -230,7 +229,7 @@ bool check_win(const char array[][columns], player_data *& data, int row, int co
         }
         // third column
         if(col == 2){
-            if(array[0][2] == symbol && array[1][2] == symbol && array[3][2] == symbol){
+            if(array[0][2] == symbol && array[1][2] == symbol && array[2][2] == symbol){
 
                 make_winner(player, data);
                 return false;
@@ -277,5 +276,31 @@ void print_spaces(int num_spaces){
 
     for(int i = 0; i < num_spaces; ++i){
         cout<<endl;
+    }
+}
+
+bool play_again(player_data *& data){
+    char input;
+
+    cout<<data->player_one_name<<": " <<data->player_one_score<<"  "<<data->player_two_name<<": "<<data->player_two_score<<endl;
+
+    cout<<"Continue(y/n)?: ";
+    cin >> input;
+    cin.ignore(100,'\n');
+
+    if(input == 'y')
+        return true;
+    else
+        return false;
+}
+
+void clear_board(char array[][columns]){
+
+    for(int i = 0; i < rows; ++i){
+        for(int j = 0; j < columns; ++j){
+
+            array[i][j] = ' ';
+
+        }
     }
 }
