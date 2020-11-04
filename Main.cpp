@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -9,7 +10,7 @@ const int columns = 3;
 
 struct player_data
 {
-    bool multiplayer;
+    bool is_multiplayer;
 
     string player_one_name;
     int player_one_score;
@@ -25,7 +26,8 @@ void print_welcome();
 void prompt_create_game(player_data * & data);
 void print_board(const char array[][columns]);
 void clear_board(char array[][columns]);
-bool make_turn(bool player, player_data *&data, char array[][columns]);
+bool make_turn(bool multiplayer, bool player, player_data *&data, char array[][columns]);
+bool make_cpu_turn(char array[][columns], player_data *& data, int difficulty);
 bool check_win(const char array[][columns], player_data *& data, int row, int col, char symbol, bool player);
 bool is_full(const char array[][columns]);
 void make_winner(bool player, player_data *& data);
@@ -53,7 +55,7 @@ int main()
         cout<<endl;
         do{
             current_turn = !current_turn;
-        }while(make_turn(current_turn, data, array));
+        }while(make_turn(data -> is_multiplayer, current_turn, data, array));
 
     }while(play_again(data));
 }
@@ -104,6 +106,8 @@ void prompt_create_game(player_data * & data){
 
         cout<<"Player 2 icon: ";
         cin >> data -> player_two_icon;
+
+        data -> is_multiplayer = true;
     }
     else{
         cout<<"Player name: ";
@@ -120,6 +124,8 @@ void prompt_create_game(player_data * & data){
         data -> player_two_icon = 'O';
         else
         data -> player_two_icon = 'X';
+
+        data -> is_multiplayer = false;
     }
 
     data -> player_one_score = 0;
@@ -140,7 +146,7 @@ void print_board(const char array[][columns])
     cout<<"3  "<<endl;
 }
 
-bool make_turn(bool player, player_data *&data, char array[][columns])
+bool make_turn(bool multiplayer, bool player, player_data *&data, char array[][columns])
 {
     int row;
     int col;
@@ -150,22 +156,26 @@ bool make_turn(bool player, player_data *&data, char array[][columns])
     else
     cout<<"Player: " << data -> player_two_name<< "'s turn:" <<endl;
 
-    do{
-        cout<<"enter row, column: "; cin >> row; cin >> col;
-        if((row < 1 || row > 3) || (col < 1 || col > 3))
-        {
-            cout << "please enter a valid row/column" <<endl <<endl;
-        }
-    }while((row < 1 || row > 3) || (col < 1 || col > 3));
+    if(multiplayer || player){
+        do{
+            cout<<"enter row, column: "; cin >> row; cin >> col;
+            if((row < 1 || row > 3) || (col < 1 || col > 3))
+            {
+                cout << "please enter a valid row/column" <<endl <<endl;
+            }
+        }while((row < 1 || row > 3) || (col < 1 || col > 3));
+    }
 
     if(player == 1){
         array[row - 1][col - 1] = data -> player_one_icon;
         return check_win(array, data, row-1, col-1, data -> player_one_icon, player);
     }
-    else{
+    else if(multiplayer){ // turn other than player 1
         array[row - 1][col - 1] = data -> player_two_icon;
         return check_win(array, data, row-1, col-1, data -> player_two_icon, player);
     }
+    else
+        return make_cpu_turn(array, data, 1);
 
 }
 
@@ -303,4 +313,22 @@ void clear_board(char array[][columns]){
 
         }
     }
+}
+bool make_cpu_turn(char array[][columns], player_data *& data, int difficulty){
+    //difficulty: 
+    // 1 - random (easy)
+    // 2 - my ai (??)
+    // 3 - algorithm (hard)
+
+    int r_row = (rand() % 3 + 1) -1;
+    int r_col = (rand() % 3 + 1) -1;
+
+    if(array[r_row][r_col] == ' '){
+        array[r_row][r_col] = data -> player_two_icon;
+    }
+    else
+        return make_cpu_turn(array, data, difficulty);
+
+    return check_win(array, data, r_row, r_col, data -> player_two_icon, false);
+
 }
