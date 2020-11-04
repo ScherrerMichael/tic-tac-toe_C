@@ -122,14 +122,14 @@ void prompt_create_game(player_data * & data){
 void print_board(const char array[][columns])
 {
     print_spaces();
-    cout<< "   1     2     3\n";
-    cout<< array[0][0]; cout<< "     |  "; cout<< array[0][1]; cout<<"  |  "; cout<< array[0][2] <<endl;
+    cout<< "   1     2     3\n\n";
+    cout<<"   "<< array[0][0]; cout<< "  |  "; cout<< array[0][1]; cout<<"  |  "; cout<< array[0][2] <<endl;
     cout<<"1  "<< '_'; cout<< "     "; cout<< '_'; cout<<"     "; cout<< '_' <<endl;
-    cout <<endl;
-    cout<< array[1][0]; cout<< "     |  "; cout<< array[1][1]; cout<<"  |  "; cout<< array[1][2] <<endl;
+    cout<<endl;
+    cout<<"   "<< array[1][0]; cout<< "  |  "; cout<< array[1][1]; cout<<"  |  "; cout<< array[1][2] <<endl;
     cout<<"2  "<< '_'; cout<< "     "; cout<< '_'; cout<<"     "; cout<< '_' <<endl;
     cout <<endl;
-    cout<< array[2][0]; cout<< "     |  "; cout<< array[2][1]; cout<<"  |  "; cout<< array[2][2] <<endl;
+    cout<<"   "<< array[2][0]; cout<< "  |  "; cout<< array[2][1]; cout<<"  |  "; cout<< array[2][2] <<endl;
     cout<<"2  "<<endl;
 }
 
