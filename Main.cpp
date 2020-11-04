@@ -13,24 +13,26 @@ struct player_data
 
     string player_one_name;
     int player_one_score;
-    char player_one_symbol;
+    char player_one_icon;
 
     string player_two_name;
     int player_two_score;
-    char player_two_symbol;
+    char player_two_icon;
 };
 
 
 void print_welcome();
-void prompt_create_game(player_data *data);
+void prompt_create_game(player_data * & data);
 void print_board(const char array[][columns]);
-void make_turn(bool player, char symbol, char array[][columns]);
-bool check_win(const char array[][columns]);
+bool make_turn(bool player, player_data *&data, char array[][columns]);
+bool check_win(const char array[][columns], player_data *& data, int row, int col, char symbol, bool player);
+bool is_full(const char array[][columns]);
+void make_winner(bool player, player_data *& data);
 
 int main()
 {
-    string input;
     player_data *data = new player_data;
+    bool current_turn = false;
 
     char array[rows][columns] ={
         {' ',' ',' '},
@@ -41,19 +43,11 @@ int main()
     print_welcome();
     prompt_create_game(data);
 
-    do{
-        cout<<"do you choose X's or O's?";
-        getline(cin,input);
-
-        if(input != "X" && input != "O"){
-            cout<<"Please choose a valid input ([X] or [O]).\n"<<endl;
-        }
-    }while(input != "X" && input != "O");
-
     // display the game board
-
-    make_turn(true,'X', array);
     print_board(array);
+    do{
+        current_turn = !current_turn;
+    }while(make_turn(current_turn, data, array));
 }
 
 void print_welcome(){
@@ -64,12 +58,14 @@ void print_welcome(){
   \_/  \_/\____/     \_/  \_/ \|\____/     \_/  \____/\____\)" <<"\n";
 }
 
-void prompt_create_game(player_data *data){
+void prompt_create_game(player_data * & data){
 
     int num_players;
     string input;
 
     cout<<"Welcome! \n";
+
+    // set up player names
 
     do{
     cout<<"How many players (1/2)?: ";
@@ -92,18 +88,34 @@ void prompt_create_game(player_data *data){
         cout<<"player 2 name: ";
         getline(cin, data -> player_two_name);
         cout<<"\n";
+
+        // set up player icons
+
+        cout<<"Player 1 icon: ";
+        cin >> data -> player_one_icon;
+
+        cout<<"Player 2 icon: ";
+        cin >> data -> player_two_icon;
     }
     else{
         cout<<"Player name: ";
         getline(cin, data -> player_one_name);
 
         data -> player_two_name = "CPU";
+
+        // set up player icons
+
+        cout<<"Player 1 icon: ";
+        cin >> data -> player_one_icon;
+
+        if(data -> player_one_icon == 'X')
+        data -> player_two_icon = 'O';
+        else
+        data -> player_two_icon = 'X';
     }
 
-    cout<<"\nEnter name: ";
-    getline(cin, input);
-    cout<<"Welcome, " + input + "."<<endl;
-
+    data -> player_one_score = 0;
+    data -> player_two_score = 0;
 }
 
 void print_board(const char array[][columns])
@@ -117,7 +129,7 @@ void print_board(const char array[][columns])
     cout<< array[2][0]; cout<< "  |  "; cout<< array[2][1]; cout<<"  |  "; cout<< array[2][2] <<endl;
 }
 
-void make_turn(bool player, char symbol, char array[][columns])
+bool make_turn(bool player, player_data *&data, char array[][columns])
 {
     int row;
     int col;
@@ -132,5 +144,121 @@ void make_turn(bool player, char symbol, char array[][columns])
         }
     }while((row < 1 || row > 3) || (col < 1 || col > 3));
 
-    array[row - 1][col - 1] = symbol;
+    if(player == 1){
+        array[row - 1][col - 1] = data -> player_one_icon;
+        return check_win(array, data, row-1, col-1, data -> player_one_icon, player);
+    }
+    else{
+        array[row - 1][col - 1] = data -> player_two_icon;
+        return check_win(array, data, row-1, col-1, data -> player_two_icon, player);
+    }
+
+}
+
+bool check_win(const char array[][columns], player_data *& data, int row, int col, char symbol, bool player)
+{
+
+    print_board(array);
+
+    //verify: 
+
+        // diagonals
+        if(row == 0 && col == 0){
+            if(array[1][1] == symbol && array[2][2] == symbol){
+
+                make_winner(player, data);
+                return false;
+            }
+        }
+
+        if(row == 0 && col == 2){
+            if(array[1][1] == symbol && array[2][0] == symbol){
+
+                make_winner(player, data);
+                return false;
+            }
+        }
+        // first row
+        if(row == 0){
+            if(array[0][0] == symbol && array[0][1] == symbol && array[0][2] == symbol){
+
+                make_winner(player, data);
+                return false;
+            }
+        }
+        // second row
+        if(row == 1){
+            if(array[1][0] == symbol && array[1][1] == symbol && array[1][2] == symbol){
+
+                make_winner(player, data);
+                return false;
+            }
+        }
+        // third row
+        if(row == 2){
+            if(array[2][0] == symbol && array[2][2] == symbol && array[2][2] == symbol){
+
+                make_winner(player, data);
+                return false;
+            }
+        }
+        // first column
+        if(col == 0){
+            if(array[0][0] == symbol && array[0][1] == symbol && array[0][2] == symbol){
+
+                make_winner(player, data);
+                return false;
+            }
+        }
+        // second column
+        if(col == 1){
+            if(array[1][1] == symbol && array[1][1] == symbol && array[1][2] == symbol){
+
+                make_winner(player, data);
+                return false;
+            }
+        }
+        // third column
+        if(col == 2){
+            if(array[2][2] == symbol && array[2][1] == symbol && array[2][2] == symbol){
+
+                make_winner(player, data);
+                return false;
+            }
+        }
+
+        //cats game (no winner)
+        if(is_full(array))
+        {
+            cout<<"cats game (no winner)";
+            return false;
+        }
+
+        return true;
+        
+}
+bool is_full(const char array[][columns])
+{
+    for(int i = 0; i < rows; ++i){
+        for(int j = 0; j < columns; ++j){
+
+            if(array[i][j] == ' '){
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+void make_winner(bool player, player_data *& data)
+{
+    if(player == 1){
+        data -> player_one_score += 1;
+        cout<<"Player: " <<data->player_one_name <<" wins!"<<endl;
+    }
+    else{
+        data -> player_two_score += 1;
+        cout<<"Player: " <<data->player_two_name <<" wins!"<<endl;
+    }
 }
